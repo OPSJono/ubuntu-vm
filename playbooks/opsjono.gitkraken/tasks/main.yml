@@ -75,24 +75,6 @@
     src: gitkraken.desktop.j2
     dest: /usr/share/applications/gitkraken.desktop
 
-- name: Symlink to (/usr/lib64/) libcurl.so.4 -> libcurl-gnutls.so.4
-  file:
-    src: /usr/lib64/libcurl.so.4
-    dest: /usr/lib64/libcurl-gnutls.so.4
-    state: link
-
-- name: Symlink to (/usr/lib64/) libcrypto.so.10 -> libcrypto.so.1.0.0
-  file:
-    src: /usr/lib64/libcrypto.so.10
-    dest: /usr/lib64/libcrypto.so.1.0.0
-    state: link
-
-- name: Symlink to (/usr/lib64/) libssl.so.10 -> libssl.so.1.0.0
-  file:
-    src: /usr/lib64/libssl.so.10
-    dest: /usr/lib64/libssl.so.1.0.0
-    state: link
-
 - name: Set the current installed etag version
   shell: |
     cp {{ gitkraken_etag_path }}{{ gitkraken_latest_etag_filename }} {{ gitkraken_etag_path }}{{ gitkraken_current_etag_filename }}

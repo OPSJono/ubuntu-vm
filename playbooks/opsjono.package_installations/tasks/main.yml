@@ -1,30 +1,20 @@
 ---
-#// Add flash support from here: https://www.if-not-true-then-false.com/2010/install-adobe-flash-player-10-on-fedora-centos-red-hat-rhel/
-
 - name: Copy Bashrc into place
   template:
     src: "bashrc.j2"
     dest: "/home/{{ ansible_user }}/.bashrc"
 
 - name: upgrade all packages
-  dnf:
+  apt:
     name: "*"
     state: latest
-
-- name: install the 'Development tools' package group
-  dnf:
-    name: '@Development tools'
-    state: present
-
-- name: install the 'virtualization' package group
-  dnf:
-    name: '@virtualization'
-    state: latest
+    force_apt_get: true
 
 - name: Install common utilties
-  dnf:
+  apt:
     name: "{{ common_packages }}"
     state: latest
+    force_apt_get: true
 
 - name: Add security group for virtual machine management
   group:
@@ -52,51 +42,6 @@
   template:
     src: libvirt-libvirt-local-access.pkla.j2
     dest: /etc/polkit-1/localauthority/50-local.d/50-org.libvirt-libvirt-local-access.pkla
-    mode: 0775
-
-- name: Add google-chrome-stable repo
-  template: 
-    src: google-chrome-stable.j2
-    dest: /etc/yum.repos.d/google-chrome.repo
-
-- name: Install google chrome
-  dnf:
-    name: "google-chrome-stable"
-    state: latest
-
-- name: Remove unwanted packaged
-  dnf:
-    name: "{{ unwanted_packages }}"
-    state: absent
-
-- name: Install SCSS ruby Gem
-  gem:
-    name: scss
-    state: latest
-    user_install: no
-
-- name: Open NFS ports in firewall for Vagrant (with firewall-cmd in command module)
-  command: "{{ item }}"
-  with_items:
-    - firewall-cmd --permanent --add-service=nfs
-    - firewall-cmd --permanent --add-service=rpc-bind
-    - firewall-cmd --permanent --add-service=mountd
-    - firewall-cmd --reload
-  become: true
-  become_user: root
-
-- name: restart services
-  service:
-    name: "{{ item }}"
-    state: restarted
-  with_items:
-    - firewalld
-    - nfs
-
-- name: Copy sudoers include file into place
-  template:
-    src: vagrant-sudoers.j2
-    dest: /etc/sudoers.d/vagrant-sudoers
     mode: 0775
 
 - name: Increase inotify user limit
